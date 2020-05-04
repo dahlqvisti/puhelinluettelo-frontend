@@ -1,0 +1,41 @@
+.added {
+  color: #00b894;
+  background: #dfe6e9;
+  font-size: 20px;
+  border-style: dotted;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.deleted {
+  color: #d63031;
+  background: #dfe6e9;
+  font-size: 20px;
+  border-style: dotted;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.replaced
+{
+  color: #0984e3;
+  background: #dfe6e9;
+  font-size: 20px;
+  border-style: dotted;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.error
+{
+  color: #fdcb6e;
+  background: #dfe6e9;
+  font-size: 20px;
+  border-style: dotted;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
