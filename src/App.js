@@ -1,114 +1,18 @@
 import React, { useState, useEffect } from 'react'
 import personService from './services/persons'
+import PersonForm from './components/PersonForm'
+import Filter from './components/Filter'
+import Person from './components/Person'
+import NotificationAdd from './components/notifications/NotificationAdd'
+import NotificationDelete from './components/notifications/NotificationDelete'
+import NotificationError from './components/notifications/NotificationError'
+import NotificationReplace from './components/notifications/NotificationReplace'
 
 
-const checkName = (arr, val) => {
-  return arr.some(element => element.name === val); 
-}
-
-const Filter = (props) => 
-{
-  return (
-    <div>
-      
-      filter shown with<input
-      type="text"
-      onChange={props.handleFilterChange}
-
-      />
-    </div>
-  )
-}
-
-const PersonForm = (props) => 
-{
-  return(
-  <div>
-  <form onSubmit= {checkName(props.persons, props.newName) ? props.rePlacePerson : props.addPerson} >
-  <div>
-    name: <input value={props.newName}
-    onChange={props.handleNameChange} />
-  </div>
-
-  <div>
-    number: <input value={props.newNumber}
-    onChange={props.handleNumberChange} />
-  </div>
-  <div>
-    <button type="submit">add</button>
-  </div>
-</form>
-</div>
-  )
-}
 
 
-const Person = (props) => 
-{
-  return (
-    <div>
-     <p>{props.name} {props.number}   <button onClick={props.remove}>Delete</button></p>
-    
-
-   </div>
-  )
-   
-}
-
-const NotificationAdd = ({message}) => {
-  if(message === null) {
-    return null
-  }
-  
-  
-    return (
-      <div className="added">
-      {message}
-    </div>
-
-    )
-  }
- 
-const NotificationError = ({message}) => {
-  if(message === null) {
-    return null
-    }
-    
-    return (
-      <div className="error">
-        {message}
-      </div>
-    )
-  }
 
 
-const NotificationDelete = ({message}) => {
-  if(message === null) {
-    return null
-  }
-  
- 
-    return (
-      <div className="deleted">
-      {message}
-    </div>
-
-    )
-  }
- 
-const NotificationRepLace = ({message}) => {
-  if(message === null) {
-    return null
-  }
-  
-  
-    return (
-      <div className="replaced">
-      {message}
-    </div>
-
-    )
-  }
  
 const App = () => {
 
@@ -134,18 +38,23 @@ const App = () => {
   
   useEffect(hook, [])
 
+  const checkName = (arr, val) => {
+    return arr.some(element => element.name === val); 
+  }
+  
+
   const addPerson = (event) => {
     event.preventDefault()
     const personObject = {
       name: newName,
       number: newNumber
     }    
-
+    setPersons(persons.concat(personObject));
     personService
     .create(personObject)
     .then(returnedPerson => {
   
-      setPersons(persons.concat(returnedPerson.data));
+      ///setPersons(persons.concat(returnedPerson.data));
       setAddedMessage(`Added ${newName}`)
       setTimeout(() => {
         setAddedMessage(null)
@@ -153,6 +62,12 @@ const App = () => {
       setNewName('') 
       setNewNumber('')
       
+    })
+    .catch(error => {
+      let messageError = error.response.data.error;
+      console.log(messageError)
+      setErrorMessage(`${messageError}`)
+      setTimeout(() => { setErrorMessage(null)}, 4000)
     })
   }
 
@@ -185,7 +100,7 @@ const App = () => {
   })
 
   .catch(error => {
-  setErrorMessage(`Information of ${newName} has already deleted from removed from server`); 
+  setErrorMessage(`Information of ${newName} has already deleted  from server`); 
   setTimeout(() => {
     setErrorMessage(null)
   }, 4000)
@@ -195,7 +110,6 @@ const App = () => {
   
   const remove = (id) => {
 
-   // const url = `http://localhost:3001/api/persons/${id}`
     const person = persons.find(p => p.id === id)
     if(window.confirm(`Delete ${person.name} ?`)) {
             
@@ -245,14 +159,18 @@ const App = () => {
 
       <NotificationAdd  message={addedMessage} />
       <NotificationDelete message={deletedMessage} />
-      <NotificationRepLace message={replacedMessage} />
+      <NotificationReplace message={replacedMessage} />
       <NotificationError message={errorMessage} />
+
+    
 
       <Filter handleFilterChange={handleFilterChange} />
 
       <h2>Add new</h2>
      
-     <PersonForm persons={persons} newName={newName}
+     <PersonForm 
+      checkName={checkName}
+     persons={persons} newName={newName}
         rePlacePerson={rePlacePerson} addPerson={addPerson}
         handleNameChange={handleNameChange}
         handleNumberChange={handleNumberChange}
